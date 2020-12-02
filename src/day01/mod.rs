@@ -35,6 +35,8 @@
 //!
 //! In your expense report, what is the product of the three entries that sum
 //! to 2020?
+//!
+//! [Advent of Code 2020 - Day 1](https://adventofcode.com/2020/day/1)
 
 use std::str::FromStr;
 
