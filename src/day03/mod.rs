@@ -109,6 +109,12 @@ pub enum Tile {
     Tree,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Position {
+    pub row: usize,
+    pub col: usize,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Map {
     tiles: Vec<Vec<Tile>>,
@@ -120,15 +126,24 @@ impl Map {
         self.tiles.len()
     }
 
-    pub fn tile(&self, row: usize, col: usize) -> Tile {
-        self.tiles[row][col % self.width]
+    pub fn tile(&self, position: Position) -> Tile {
+        self.tiles[position.row][position.col % self.width]
+    }
+
+    pub fn walk(&self, slope: Slope, start: Position) -> Walker<'_> {
+        Walker {
+            map: &self,
+            slope,
+            start,
+            current: start,
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Slope {
-    right: usize,
-    down: usize,
+    pub right: usize,
+    pub down: usize,
 }
 
 #[aoc_generator(day3)]
@@ -162,11 +177,45 @@ pub fn parse(input: &str) -> Map {
     }
 }
 
-fn count_trees_on_slope(slope: &Slope, map: &Map) -> usize {
+#[derive(Debug)]
+pub struct Walker<'a> {
+    map: &'a Map,
+    slope: Slope,
+    start: Position,
+    current: Position,
+}
+
+impl<'a> Iterator for Walker<'a> {
+    type Item = Tile;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current.row >= self.map.height() {
+            return None;
+        }
+        let next_tile = self.map.tile(self.current);
+        self.current.col += self.slope.right;
+        self.current.row += self.slope.down;
+        Some(next_tile)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let num_steps = (self.map.height() - self.current.row) / self.slope.down;
+        (num_steps, Some(num_steps))
+    }
+}
+
+fn count_trees_walking_down_the_slope(slope: Slope, map: &Map) -> usize {
+    map.walk(slope, Position { row: 0, col: 0 })
+        .filter(|tile| *tile == Tile::Tree)
+        .count()
+}
+
+#[allow(dead_code)]
+fn count_trees_on_slope(slope: Slope, map: &Map) -> usize {
     (0..map.height())
         .step_by(slope.down)
         .zip((0..usize::max_value()).step_by(slope.right))
-        .map(|(row, col)| map.tile(row, col))
+        .map(|(row, col)| map.tile(Position { row, col }))
         .filter(|tile| *tile == Tile::Tree)
         .count()
 }
@@ -174,7 +223,7 @@ fn count_trees_on_slope(slope: &Slope, map: &Map) -> usize {
 #[aoc(day3, part1)]
 pub fn count_trees_on_slope_r3d1(map: &Map) -> usize {
     let slope = Slope { right: 3, down: 1 };
-    count_trees_on_slope(&slope, map)
+    count_trees_walking_down_the_slope(slope, map)
 }
 
 #[aoc(day3, part2)]
@@ -189,7 +238,7 @@ pub fn product_of_trees_on_multiple_slopes(map: &Map) -> usize {
 
     slopes
         .iter()
-        .map(|slope| count_trees_on_slope(slope, map))
+        .map(|slope| count_trees_walking_down_the_slope(*slope, map))
         .product()
 }
 
