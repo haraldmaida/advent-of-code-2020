@@ -74,6 +74,7 @@ pub struct Policy {
     character: char,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Parts {
     Min,
     Max,
@@ -165,6 +166,7 @@ pub fn count_valid_passwords(input: &[(Policy, String)]) -> usize {
         .count()
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PolicyV2Violation {
     NoMatch,
     MultipleMatches,
