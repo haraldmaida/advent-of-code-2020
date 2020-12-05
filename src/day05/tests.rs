@@ -11,28 +11,28 @@ fn parse_input() {
 
 #[test]
 fn seat_id_of_example1() {
-    let seat = seat_of_boarding_pass("FBFBBFFRLR").unwrap();
+    let seat = seat_on_boarding_pass("FBFBBFFRLR").unwrap();
 
     assert_eq!(seat.id, 357);
 }
 
 #[test]
 fn seat_id_of_example2() {
-    let seat = seat_of_boarding_pass("BFFFBBFRRR").unwrap();
+    let seat = seat_on_boarding_pass("BFFFBBFRRR").unwrap();
 
     assert_eq!(seat.id, 567);
 }
 
 #[test]
 fn seat_id_of_example3() {
-    let seat = seat_of_boarding_pass("FFFBBBFRRR").unwrap();
+    let seat = seat_on_boarding_pass("FFFBBBFRRR").unwrap();
 
     assert_eq!(seat.id, 119);
 }
 
 #[test]
 fn seat_id_of_example4() {
-    let seat = seat_of_boarding_pass("BBFFBBFRLL").unwrap();
+    let seat = seat_on_boarding_pass("BBFFBBFRLL").unwrap();
 
     assert_eq!(seat.id, 820);
 }

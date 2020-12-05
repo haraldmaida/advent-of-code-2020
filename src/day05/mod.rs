@@ -238,7 +238,7 @@ fn seat_position(boarding_pass: &str) -> Result<Position, PartitionError> {
     }
 }
 
-fn seat_of_boarding_pass(boarding_pass: &str) -> Result<Seat, PartitionError> {
+fn seat_on_boarding_pass(boarding_pass: &str) -> Result<Seat, PartitionError> {
     seat_position(boarding_pass).map(Seat::from)
 }
 
@@ -256,7 +256,7 @@ pub fn highest_seat_id_on_a_boarding_pass(boarding_passes: &[String]) -> usize {
     boarding_passes
         .iter()
         .map(|boarding_pass| {
-            seat_of_boarding_pass(boarding_pass)
+            seat_on_boarding_pass(boarding_pass)
                 .map(|seat| seat.id)
                 .unwrap_or_else(|err| panic!("error: {:?}", err))
         })
@@ -269,7 +269,7 @@ pub fn find_free_seat(boarding_passes: &[String]) -> usize {
     let mut seat_ids = boarding_passes
         .iter()
         .map(|boarding_pass| {
-            seat_of_boarding_pass(boarding_pass)
+            seat_on_boarding_pass(boarding_pass)
                 .map(|seat| seat.id)
                 .unwrap_or_else(|err| panic!("error: {:?}", err))
         })
