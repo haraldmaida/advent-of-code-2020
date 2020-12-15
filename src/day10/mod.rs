@@ -120,7 +120,7 @@
 //! the charging outlet, the adapters, and your device. What is the number of
 //! 1-jolt differences multiplied by the number of 3-jolt differences?
 //!
-//! ## Part Two
+//! ## Part 2
 //!
 //! To completely determine whether you have enough adapters, you'll need to
 //! figure out how many different ways they can be arranged. Every arrangement
