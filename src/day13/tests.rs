@@ -135,6 +135,7 @@ fn earliest_time_buses_depart_in_sequence_in_example6() {
     assert_eq!(earliest_time, 1202161486);
 }
 
+#[ignore]
 #[test]
 fn earliest_time_buses_depart_in_sequence_in_puzzle_input() {
     let notes = parse_bus_service_notes(INPUT);
