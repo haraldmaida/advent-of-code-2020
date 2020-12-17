@@ -76,7 +76,8 @@
 //!
 //! [Advent of Code 2020 - Day 15](https://adventofcode.com/2020/day/15)
 
-use std::collections::HashMap;
+use fxhash::FxBuildHasher;
+use hashbrown::HashMap;
 use std::str::FromStr;
 
 pub type Number = u32;
@@ -108,7 +109,7 @@ impl History {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Memory {
-    history: HashMap<Number, History>,
+    history: HashMap<Number, History, FxBuildHasher>,
     last_number: Number,
     last_turn: u32,
 }
@@ -116,7 +117,7 @@ pub struct Memory {
 impl Memory {
     pub fn new() -> Self {
         Self {
-            history: HashMap::new(),
+            history: HashMap::with_hasher(FxBuildHasher::default()),
             last_number: 0,
             last_turn: 0,
         }
