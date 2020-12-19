@@ -116,29 +116,18 @@ use hashbrown::HashMap;
 use std::collections::hash_map::RandomState;
 use std::collections::HashSet;
 use std::iter::FromIterator;
+use std::ops::RangeInclusive;
 use std::str::FromStr;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Range {
-    pub min: u32,
-    pub max: u32,
-}
-
-impl Range {
-    pub fn is_valid(&self, value: u32) -> bool {
-        self.min <= value && value <= self.max
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Field {
     pub label: String,
-    pub ranges: [Range; 2],
+    pub ranges: [RangeInclusive<u32>; 2],
 }
 
 impl Field {
     pub fn is_valid(&self, value: u32) -> bool {
-        self.ranges.iter().any(|r| r.is_valid(value))
+        self.ranges.iter().any(|r| r.contains(&value))
     }
 }
 
@@ -176,16 +165,7 @@ pub fn parse_ticket_notes(input: &str) -> TicketNotes {
         let range2_max = u32::from_str(range2.next().unwrap().trim()).unwrap();
         let field = Field {
             label: label.to_string(),
-            ranges: [
-                Range {
-                    min: range1_min,
-                    max: range1_max,
-                },
-                Range {
-                    min: range2_min,
-                    max: range2_max,
-                },
-            ],
+            ranges: [range1_min..=range1_max, range2_min..=range2_max],
         };
         fields.push(field);
     }

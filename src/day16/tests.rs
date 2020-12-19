@@ -41,15 +41,15 @@ fn parse_ticket_notes_in_example1() {
             fields: vec![
                 Field {
                     label: "class".to_string(),
-                    ranges: [Range { min: 1, max: 3 }, Range { min: 5, max: 7 }]
+                    ranges: [1..=3, 5..=7]
                 },
                 Field {
                     label: "row".to_string(),
-                    ranges: [Range { min: 6, max: 11 }, Range { min: 33, max: 44 }]
+                    ranges: [6..=11, 33..=44]
                 },
                 Field {
                     label: "seat".to_string(),
-                    ranges: [Range { min: 13, max: 40 }, Range { min: 45, max: 50 }]
+                    ranges: [13..=40, 45..=50]
                 },
             ],
             my_ticket: Ticket {
