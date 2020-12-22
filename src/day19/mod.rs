@@ -242,11 +242,18 @@ impl Pattern {
         let mut result = true;
         let mut current = 0;
         let mut open = vec![State { id: 0, op: And }];
+        let mut prev_or_ops = vec![];
         while let Some(State { id, op }) = open.pop() {
             match &self.rules[id] {
                 Expr::Char(c) => {
                     if chars[current] != *c {
                         result = false;
+                        // go back to previous OR operation
+                        if let Some(prev_or_op) = prev_or_ops.pop() {
+                            open.drain(prev_or_op..);
+                        } else {
+                            return false;
+                        }
                     }
                     current += 1;
                 }
@@ -262,17 +269,20 @@ impl Pattern {
                                 prev_result: result,
                             },
                         });
+                        prev_or_ops.push(open.len());
                         open.extend(left_seq.iter().rev().map(|id| State { id: *id, op: And }));
                         result = true;
                     }
                     OrLeft { start, prev_result } => {
                         if result {
+                            prev_or_ops.pop();
                             result = prev_result;
                         } else {
                             open.push(State {
                                 id,
                                 op: OrRight { prev_result },
                             });
+                            prev_or_ops.push(open.len());
                             open.extend(
                                 right_seq.iter().rev().map(|id| State { id: *id, op: And }),
                             );
@@ -281,7 +291,18 @@ impl Pattern {
                         }
                     }
                     OrRight { prev_result } => {
-                        result = result && prev_result;
+                        if result {
+                            prev_or_ops.pop();
+                            result = prev_result;
+                        } else {
+                            result = false;
+                            // go back to previous OR operation
+                            if let Some(prev_or_op) = prev_or_ops.pop() {
+                                open.drain(prev_or_op..);
+                            } else {
+                                return false;
+                            }
+                        }
                     }
                 },
             }
@@ -368,7 +389,7 @@ pub fn count_matching_messages(monster_messages: &MonsterMessages) -> usize {
         .count()
 }
 
-#[aoc(day19, part2)]
+//#[aoc(day19, part2)]
 pub fn count_matching_messages_patched_rules(monster_messages: &MonsterMessages) -> usize {
     let mut pattern = Pattern::new(monster_messages.rules.clone());
     pattern.patch(8, Expr::Or(vec![42], vec![42, 8]));
