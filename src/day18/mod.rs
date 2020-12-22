@@ -335,6 +335,7 @@ impl Parser for CustomPrecedence {
     type Output = Expression;
     type Error = ParseMathExpressionError;
 
+    #[allow(unused_assignments)]
     fn parse(tokens: impl IntoIterator<Item = Token>) -> Result<Self::Output, Self::Error> {
         #[derive(Debug, Clone, Copy, PartialEq)]
         enum State {
